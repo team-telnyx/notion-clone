@@ -1,11 +1,15 @@
-CREATE TYPE block_type AS ENUM (
-    'PAGE',
-    'TEXT',
-    'HEADING_1',
-    'HEADING_2',
-    'HEADING_3',
-    'BULLET_LIST'
-);
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'block_type') THEN
+        CREATE TYPE block_type AS ENUM (
+            'PAGE',
+            'TEXT',
+            'HEADING_1',
+            'HEADING_2',
+            'HEADING_3',
+            'BULLET_LIST'
+        );
+    END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS blocks (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

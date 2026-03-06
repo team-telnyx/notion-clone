@@ -1,4 +1,8 @@
-CREATE TYPE space_member_role AS ENUM ('OWNER', 'ADMIN', 'MEMBER', 'VIEWER');
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'space_member_role') THEN
+        CREATE TYPE space_member_role AS ENUM ('OWNER', 'ADMIN', 'MEMBER', 'VIEWER');
+    END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS space_members (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

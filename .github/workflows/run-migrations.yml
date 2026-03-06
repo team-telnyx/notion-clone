@@ -1,0 +1,85 @@
+name: Run Database Migrations
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (show SQL without executing)'
+        required: false
+        default: 'false'
+        type: boolean
+      verify:
+        description: 'Run verification tests after migration'
+        required: true
+        default: 'true'
+        type: boolean
+
+env:
+  DB_HOST: pgbot-main-18.internal
+  DB_PORT: 5432
+  DB_NAME: notion_clone
+  DB_USER: notion_clone
+
+jobs:
+  run-migrations:
+    runs-on: [self-hosted, internal]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run migrations
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        run: |
+          echo "Running all database migrations..."
+          
+          for migration in migrations/*.sql; do
+            echo "Executing: $migration"
+            PGPASSWORD="${{ secrets.DB_PASSWORD }}" psql \
+              -h $DB_HOST \
+              -p $DB_PORT \
+              -U $DB_USER \
+              -d $DB_NAME \
+              -f "$migration"
+            echo "✓ $migration completed"
+          done
+          
+          echo ""
+          echo "All migrations completed successfully!"
+
+      - name: Dry run (show SQL only)
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        run: |
+          echo "DRY RUN - Showing migration SQL without executing..."
+          echo ""
+          for migration in migrations/*.sql; do
+            echo "=========================================="
+            echo "File: $migration"
+            echo "=========================================="
+            cat "$migration"
+            echo ""
+          done
+
+      - name: Verify tables
+        if: ${{ github.event.inputs.verify == 'true' && github.event.inputs.dry_run == 'false' }}
+        run: |
+          echo "Verifying database schema..."
+          
+          echo ""
+          echo "=== Tables ==="
+          PGPASSWORD="${{ secrets.DB_PASSWORD }}" psql \
+            -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME \
+            -c "\dt"
+          
+          echo ""
+          echo "=== Indexes ==="
+          PGPASSWORD="${{ secrets.DB_PASSWORD }}" psql \
+            -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME \
+            -c "\di"
+
+      - name: Run verification tests
+        if: ${{ github.event.inputs.verify == 'true' && github.event.inputs.dry_run == 'false' }}
+        run: |
+          echo "Running comprehensive verification tests..."
+          PGPASSWORD="${{ secrets.DB_PASSWORD }}" psql \
+            -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME \
+            -f tests/verify_migrations.sql

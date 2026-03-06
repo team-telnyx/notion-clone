@@ -20,6 +20,11 @@ env:
   DB_NAME: notion_clone
   DB_USER: notion_clone
 
+# Prevent concurrent migrations - only one can run at a time
+concurrency:
+  group: database-migrations
+  cancel-in-progress: false
+
 jobs:
   run-migrations:
     runs-on: [self-hosted, internal]
@@ -30,6 +35,7 @@ jobs:
       - name: Run migrations
         if: ${{ github.event.inputs.dry_run == 'false' }}
         run: |
+          set -e
           echo "Running all database migrations..."
           
           for migration in migrations/*.sql; do
@@ -49,6 +55,7 @@ jobs:
       - name: Dry run (show SQL only)
         if: ${{ github.event.inputs.dry_run == 'true' }}
         run: |
+          set -e
           echo "DRY RUN - Showing migration SQL without executing..."
           echo ""
           for migration in migrations/*.sql; do
@@ -62,6 +69,7 @@ jobs:
       - name: Verify tables
         if: ${{ github.event.inputs.verify == 'true' && github.event.inputs.dry_run == 'false' }}
         run: |
+          set -e
           echo "Verifying database schema..."
           
           echo ""
@@ -79,6 +87,7 @@ jobs:
       - name: Run verification tests
         if: ${{ github.event.inputs.verify == 'true' && github.event.inputs.dry_run == 'false' }}
         run: |
+          set -e
           echo "Running comprehensive verification tests..."
           PGPASSWORD="${{ secrets.DB_PASSWORD }}" psql \
             -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME \

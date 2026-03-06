@@ -1,0 +1,22 @@
+{
+  "name": "notion-clone",
+  "version": "1.0.0",
+  "description": "Notion Clone - Database Migrations",
+  "scripts": {
+    "test": "jest --verbose",
+    "test:watch": "jest --watch",
+    "test:migrations": "jest tests/database/migrations.test.js --verbose",
+    "migrate": "npm run migrate:up",
+    "migrate:up": "node scripts/run-migrations.js up",
+    "migrate:down": "node scripts/run-migrations.js down"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "pg": "^8.10.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"],
+    "testTimeout": 30000
+  }
+}

@@ -7,6 +7,9 @@ export default defineConfig({
   server: {
     port: 5173,
   },
+  define: {
+    'process.env.NODE_ENV': '"development"',
+  },
   test: {
     globals: true,
     environment: 'jsdom',

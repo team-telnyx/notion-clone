@@ -1,22 +1,24 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from './hooks/useAuth';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Workspace from './pages/Workspace';
+import ProtectedRoute from './components/ProtectedRoute';
+import { navigationService } from './services/navigation';
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-  
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  if (!user) return <Navigate to="/login" />;
-  
-  return <>{children}</>;
+function NavigationInitializer() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigationService.setNavigate(navigate);
+  }, [navigate]);
+  return null;
 }
 
 function App() {
   return (
     <BrowserRouter>
+      <NavigationInitializer />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

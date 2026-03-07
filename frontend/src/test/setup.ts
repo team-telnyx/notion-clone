@@ -1,5 +1,10 @@
 import '@testing-library/jest-dom'
 import { vi, beforeEach, afterEach } from 'vitest'
+import * as React from 'react'
+
+if (!React.act) {
+  throw new Error('React.act is not available. Ensure you are using React 19+')
+}
 
 const localStorageMock = {
   getItem: vi.fn(),

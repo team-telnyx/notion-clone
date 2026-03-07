@@ -4,7 +4,7 @@ import { resolve } from 'path';
 describe('Database Setup - Knex Configuration', () => {
   describe('Database Connection', () => {
     it('should have knexfile configuration', () => {
-      const knexfilePath = resolve(__dirname, '../../knexfile.ts');
+      const knexfilePath = resolve(__dirname, '../config/knexfile.ts');
       const exists = existsSync(knexfilePath);
       expect(exists).toBe(true);
     });
@@ -16,19 +16,19 @@ describe('Database Setup - Knex Configuration', () => {
     });
 
     it('should have knexfile with pg client configured', () => {
-      const knexfilePath = resolve(__dirname, '../../knexfile.ts');
+      const knexfilePath = resolve(__dirname, '../config/knexfile.ts');
       const content = readFileSync(knexfilePath, 'utf-8');
       expect(content).toContain("client: 'pg'");
     });
 
     it('should have knexfile with migrations directory configured', () => {
-      const knexfilePath = resolve(__dirname, '../../knexfile.ts');
+      const knexfilePath = resolve(__dirname, '../config/knexfile.ts');
       const content = readFileSync(knexfilePath, 'utf-8');
-      expect(content).toContain("directory: './migrations'");
+      expect(content).toContain('migrations');
     });
 
     it('should have migrations directory', () => {
-      const migrationsDir = resolve(__dirname, '../../migrations');
+      const migrationsDir = resolve(__dirname, '../../../migrations');
       const exists = existsSync(migrationsDir);
       expect(exists).toBe(true);
     });

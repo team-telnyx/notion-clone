@@ -1,5 +1,6 @@
 import type { Knex } from 'knex';
 import dotenv from 'dotenv';
+import { resolve } from 'path';
 
 dotenv.config();
 
@@ -14,7 +15,7 @@ const config: { [key: string]: Knex.Config } = {
       database: process.env.DB_NAME || 'notion_clone'
     },
     migrations: {
-      directory: './migrations'
+      directory: resolve(__dirname, '../../../migrations')
     }
   }
 };

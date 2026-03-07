@@ -1,10 +1,10 @@
 import axios from 'axios';
+import { navigationService } from '../services/navigation';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api',
 });
 
-// Add auth token to requests
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -13,13 +13,12 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 responses
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      window.location.href = '/login';
+      navigationService.navigateTo('/login');
     }
     return Promise.reject(error);
   }

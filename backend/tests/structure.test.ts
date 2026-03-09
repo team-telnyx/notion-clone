@@ -20,6 +20,12 @@ describe('Project Structure', () => {
     });
   });
 
+  test('should have migrations directory', () => {
+    const migrationsPath = path.join(backendDir, 'migrations');
+    expect(fs.existsSync(migrationsPath)).toBe(true);
+    expect(fs.statSync(migrationsPath).isDirectory()).toBe(true);
+  });
+
   test('should have all required source files', () => {
     const requiredFiles = [
       'src/index.ts',

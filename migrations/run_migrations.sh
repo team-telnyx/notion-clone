@@ -7,7 +7,7 @@ set -e
 HOST=${1:-pgbot-main-18.internal}
 PORT=${2:-5432}
 DB=${3:-notion_clone}
-USER=${4:-postgres}
+USER=${4:-notion_clone}
 
 echo "Running migrations against ${DB} on ${HOST}:${PORT} as ${USER}"
 

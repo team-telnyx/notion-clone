@@ -8,7 +8,8 @@ describe('TypeScript Compilation', () => {
 
   test('should compile TypeScript without errors', () => {
     expect(() => {
-      execSync('npx tsc --noEmit', {
+      // Use bun run tsc instead of npx tsc for Bun compatibility
+      execSync('bun run tsc --noEmit', {
         cwd: backendDir,
         stdio: 'pipe',
       });

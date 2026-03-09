@@ -1,4 +1,6 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
+process.env.NODE_ENV = 'development';
+
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',

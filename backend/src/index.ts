@@ -15,6 +15,10 @@ app.get('/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+app.use((_req: Request, res: Response) => {
+  res.status(404).json({ error: 'Not Found' });
+});
+
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Error:', err.message);
   res.status(500).json({ error: 'Internal Server Error' });

@@ -1,25 +1,26 @@
 import knex from 'knex';
 import type { Knex } from 'knex';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-// Inline config to avoid path resolution issues
-const config: { [key: string]: Knex.Config } = {
-  development: {
-    client: 'pg',
-    connection: {
-      host: process.env.DB_HOST || 'pgbot-main-18.internal',
-      port: Number(process.env.DB_PORT) || 5432,
-      user: process.env.DB_USER || 'notion_clone',
-      password: process.env.DB_PASSWORD || '',
-      database: process.env.DB_NAME || 'notion_clone'
-    },
-    migrations: {
-      directory: './migrations'
-    }
-  }
-};
+import knexConfig from '../../knexfile';
 
 const environment = process.env.NODE_ENV || 'development';
-export const db = knex(config[environment]);
+export const db: Knex = knex(knexConfig[environment]);
+
+export async function testConnection(): Promise<boolean> {
+  try {
+    await db.raw('SELECT 1');
+    console.log('Database connection successful');
+    return true;
+  } catch (error) {
+    console.error('Database connection failed:', error instanceof Error ? error.message : error);
+    return false;
+  }
+}
+
+export async function closeConnection(): Promise<void> {
+  try {
+    await db.destroy();
+    console.log('Database connection closed');
+  } catch (error) {
+    console.error('Error closing database connection:', error instanceof Error ? error.message : error);
+  }
+}
